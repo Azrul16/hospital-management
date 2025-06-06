@@ -1,263 +1,253 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:hospital_managment_app/notifiers/Is_doctor_notifier.dart';
-import 'package:hospital_managment_app/notifiers/patient_notifier.dart';
-import 'package:hospital_managment_app/notifiers/user_notifier.dart';
-import 'package:hospital_managment_app/notifiers/doctor_notifier.dart';
-import 'package:hospital_managment_app/screens/appointments/current_appointments.dart';
-import 'package:hospital_managment_app/screens/appointments/set_appointments_page.dart';
-import 'package:hospital_managment_app/screens/auth/signin_screen.dart';
-import 'package:hospital_managment_app/screens/auth/signup_screen.dart';
-import 'package:hospital_managment_app/screens/doctor/patient_page.dart';
-import 'package:hospital_managment_app/screens/doctor/patients_page.dart';
-import 'package:hospital_managment_app/screens/doctor/welcome_page.dart';
-import 'package:hospital_managment_app/screens/lab/lab_results_page.dart';
-import 'package:hospital_managment_app/screens/lab/lab_test_page.dart';
-import 'package:hospital_managment_app/screens/appointments/appointment_page.dart';
-import 'package:hospital_managment_app/screens/notifications/notification_page.dart';
-import 'package:hospital_managment_app/screens/payment/congrats.dart';
-import 'package:hospital_managment_app/screens/payment/payment_method.dart';
-import 'package:hospital_managment_app/screens/payment/payment_with_page.dart';
-import 'package:hospital_managment_app/screens/home/home_page.dart';
-import 'package:hospital_managment_app/screens/prescriptions/prescription_page.dart';
-import 'package:hospital_managment_app/screens/profile/edit_image.dart';
-import 'package:hospital_managment_app/screens/profile/personal_details.dart';
-import 'package:hospital_managment_app/screens/profile/profile.dart';
-import 'package:hospital_managment_app/styles/palette.dart';
-import 'package:hospital_managment_app/wrapper/app_lifecycle.dart';
-
+import 'screens/auth/login_screen.dart';
+import 'screens/auth/patient_register_screen.dart';
+import 'screens/auth/doctor_register_screen.dart';
+import 'screens/patient/patient_home.dart';
+import 'screens/doctor/doctor_home.dart';
+import 'screens/admin/admin_home.dart';
+import 'services/auth_service.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
-
-//Since using print() will reduce the app's performance we can use this
-import 'package:logging/logging.dart';
-
-//Containing a set of constant value helping us to do cross platform stuff and more
-import 'package:flutter/foundation.dart';
-
-//To create routes within our application
-import 'package:go_router/go_router.dart';
-
-//To manage state within the app
-import 'package:provider/provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'models/doctor.dart';
+import 'models/patient.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-
-  if (kDebugMode) {
-    // Log more when in debug mode.
-    Logger.root.level = Level.FINE;
-  }
-
-  // Subscribe to log messages.
-  Logger.root.onRecord.listen((record) {
-    final message = '${record.level.name}: ${record.time}: '
-        '${record.loggerName}: '
-        '${record.message}';
-
-    debugPrint(message);
-  });
-
-  _log.info('Going full screen');
-  SystemChrome.setEnabledSystemUIMode(
-    SystemUiMode.manual,
-    overlays: [SystemUiOverlay.top],
-  );
-
-
-  
-  _log.info('Initializing Firebase&Firestore db done without errors');
-
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
-Logger _log = Logger('main.dart');
+class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
 
-class MyApp extends StatelessWidget {
-  //This contains all the routes of our app (atleast what we are using now)
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
 
-  static final _router = GoRouter(routes: <RouteBase>[
-    GoRoute(
-      path: '/',
-      builder: (BuildContext context, GoRouterState state) =>
-          const HomePage( ),
-    ),
-    GoRoute(
-        path: '/auth',
-        builder: (BuildContext context, GoRouterState state) =>
-            const SignInScreen(),
-        routes: [
-          GoRoute(
-            path: 'sign-up',
-            builder: (BuildContext context, GoRouterState state) =>
-                const SignUpScreen(),
-          ),
-          GoRoute(
-            path: 'forgot-password',
-            builder: (context, state) => const SignUpScreen(),
-          ),
-        ]),
-    GoRoute(
-        path: "/home",
-        builder: (BuildContext context, GoRouterState state) {
+class _MyAppState extends State<MyApp> {
+  final AuthService _authService = AuthService();
+  bool _isLoggedIn = false;
+  String _userRole = '';
 
-          return const HomePage();
-        },
-        routes: [
-          GoRoute(
-            path: "set-appointment",
-            builder: (BuildContext context, GoRouterState state) =>
-                const SetAppointmentPage(
-              name: 'Dr. Jenny Wilson',
-              speciality: 'Dental Surgeon',
-              rating: '4.8',
-            ),
-          ),
-          GoRoute(
-            path: "notifications",
-            builder: (BuildContext context, GoRouterState state) =>
-                const NotificationPage(),
-          ),
-          GoRoute(
-              path: "patient-details",
-              builder: (BuildContext context, GoRouterState state) =>
-                  const PatientsPage(),
-              routes: [
-                GoRoute(
-                    path: 'single-patient/:id',
-                    builder: (BuildContext context, GoRouterState state) {
-                      ///Get the ID of the patient we click on and open the details of that patient
-                      final int id = int.parse(state.pathParameters['id']!);
-                      return PatientPage(id: id);
-                    }),
-              ]),
-          GoRoute(
-              path: 'profile',
-              builder: (BuildContext context, GoRouterState state) =>
-                  const ProfileScreen(),
-              routes: [
-                GoRoute(
-                  path: 'personal-details',
-                  builder: (BuildContext context, GoRouterState state) =>
-                      const PersonalDetails(),
-                ),
-                GoRoute(
-                  path: 'edit-image',
-                  builder: (BuildContext context, GoRouterState state) =>
-                      const EditImagePage(),
-                ),
-              ]),
-          GoRoute(
-              path: 'appointments',
-              builder: (BuildContext context, GoRouterState state) =>
-                  const CurrentAppointmentsPage(),
-              routes: [
-                GoRoute(
-                  path: 'current-appointment',
-                  builder: (BuildContext context, GoRouterState state) =>
-                      const CurrentAppointmentsPage(),
-                ),
-                GoRoute(
-                  path: 'my-appointment',
-                  builder: (BuildContext context, GoRouterState state) =>
-                      const Appointmentpage(),
-                ),
-                GoRoute(
-                  path: 'appointment-history',
-                  builder: (BuildContext context, GoRouterState state) =>
-                      const Appointmentpage(),
-                ),
-              ]),
-          GoRoute(
-            path: 'lab-test',
-            builder: (context, state) => const LabTesPage(),
-          ),
-          GoRoute(
-              path: 'payment',
-              builder: (context, state) => const PaymentMethodPage(),
-              routes: [
-                GoRoute(
-                  path: 'mtn',
-                  builder: (BuildContext context, GoRouterState state) =>
-                      const PaymentWith(
-                    operator: 'MTN',
-                    isMTNFirst: true,
-                    image: "assets/images/mtn-mobile-money.png",
-                  ),
-                ),
-                GoRoute(
-                  path: 'orange',
-                  builder: (BuildContext context, GoRouterState state) =>
-                      const PaymentWith(
-                    operator: 'Orange',
-                    isMTNFirst: false,
-                    image: "assets/images/orange-money.png",
-                  ),
-                ),
-                GoRoute(
-                  path: 'congrats',
-                  builder: (BuildContext context, GoRouterState state) =>
-                      const CongratsPage(),
-                ),
-              ]),
-          GoRoute(
-            path: 'prescriptions',
-            builder: (context, state) => const PrescriptionPage(),
-          ),
-          GoRoute(
-            path: 'history',
-            builder: (context, state) => const CurrentAppointmentsPage(),
-          ),
-          GoRoute(
-            path: 'downloads',
-            builder: (context, state) => const LabResultPage(),
-          ),
-        ]),
-  ]);
+  @override
+  void initState() {
+    super.initState();
+    _checkLoginStatus();
+  }
 
-  const MyApp({super.key});
+  Future<void> _checkLoginStatus() async {
+    final user = _authService.getCurrentUser();
+    if (user != null) {
+      final role = await _fetchUserRole(user.uid);
+      setState(() {
+        _isLoggedIn = true;
+        _userRole = role;
+      });
+    }
+  }
 
-  // This widget is the root of your application.
+  Future<String> _fetchUserRole(String uid) async {
+    final doc =
+        await FirebaseFirestore.instance.collection('users').doc(uid).get();
+    if (doc.exists) {
+      final data = doc.data();
+      if (data != null && data.containsKey('role')) {
+        return data['role'] as String;
+      }
+    }
+    return 'patient'; // default role
+  }
+
+  Future<dynamic> _getUserData() async {
+    final user = _authService.getCurrentUser();
+    if (user != null) {
+      final doc =
+          await FirebaseFirestore.instance
+              .collection(_userRole == 'patient' ? 'patients' : 'doctors')
+              .doc(user.uid)
+              .get();
+      if (doc.exists) {
+        final data = doc.data() ?? {};
+        return _userRole == 'patient'
+            ? Patient.fromMap(data)
+            : Doctor.fromMap(data);
+      }
+    }
+    return null;
+  }
+
+  Future<void> _onLoginSuccess(BuildContext context) async {
+    try {
+      final user = _authService.getCurrentUser();
+      if (user != null) {
+        final role = await _fetchUserRole(user.uid);
+        if (!mounted) return;
+        setState(() {
+          _isLoggedIn = true;
+          _userRole = role;
+        });
+        await _handleInitialRoute(context);
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Login error: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      setState(() {
+        _isLoggedIn = false;
+        _userRole = '';
+      });
+    }
+  }
+
+  void _onLogout() {
+    _authService.logout();
+    setState(() {
+      _isLoggedIn = false;
+      _userRole = '';
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return AppLifecycleObserver(
-      child: MultiProvider(
-        providers: [
-          ChangeNotifierProvider(create: (_) => IsDoctorNotifier()),
-          ChangeNotifierProvider(create: (_) => UserNotifier()),
-          ChangeNotifierProvider(create: (_) => PatientNotifier()),
-          ChangeNotifierProvider(create: (_) => DoctorNotifier()),
-
-          ///
-          /// Providing the palette to the whole application. To access it, just use
-          /// final palette = context.watch<Palette>();
-          Provider(
-            create: (context) => Palette(),
+    return MaterialApp(
+      title: 'Healthcare App',
+      theme: ThemeData(
+        brightness: Brightness.light,
+        primaryColor: const Color(0xFF87CEEB),
+        scaffoldBackgroundColor: Colors.white,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFF87CEEB),
+          foregroundColor: Colors.white,
+        ),
+        colorScheme: ColorScheme.light(
+          primary: const Color(0xFF87CEEB),
+          secondary: Colors.white,
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            foregroundColor: Colors.white,
+            backgroundColor: const Color(0xFF87CEEB),
           ),
-        ],
-        child: Builder(builder: (context) {
-          final palette = context.watch<Palette>();
-          return MaterialApp.router(
-            title: 'Flutter Demo',
-            theme: ThemeData.from(
-              colorScheme: ColorScheme.fromSeed(
-                seedColor: palette.darkViolet,
-                background: palette.backgroundMain,
-              ),
-              textTheme: TextTheme(
-                bodyMedium: TextStyle(
-                  color: palette.trueWhite,
-                ),
-              ),
-            ),
-            routerConfig: _router,
-            debugShowCheckedModeBanner: false,
+        ),
+        textButtonTheme: TextButtonThemeData(
+          style: TextButton.styleFrom(foregroundColor: const Color(0xFF87CEEB)),
+        ),
+      ),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        primaryColor: const Color(0xFF0D47A1),
+        scaffoldBackgroundColor: const Color(0xFF121212),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFF0D47A1),
+          foregroundColor: Colors.white,
+        ),
+        colorScheme: ColorScheme.dark(
+          primary: const Color(0xFF0D47A1),
+          secondary: Colors.black,
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            foregroundColor: Colors.white,
+            backgroundColor: const Color(0xFF0D47A1),
+          ),
+        ),
+        textButtonTheme: TextButtonThemeData(
+          style: TextButton.styleFrom(foregroundColor: const Color(0xFF64B5F6)),
+        ),
+      ),
+      themeMode: ThemeMode.system,
+      home: Builder(
+        builder: (context) {
+          return LoginScreen(
+            onLoginSuccess: () async {
+              await _onLoginSuccess(context);
+            },
           );
-        }),
+        },
       ),
     );
+  }
+
+  Future<void> _handleInitialRoute(BuildContext context) async {
+    if (!_isLoggedIn) {
+      return;
+    }
+
+    try {
+      // Show loading indicator
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const Center(child: CircularProgressIndicator()),
+      );
+
+      final userData = await _getUserData();
+
+      // Hide loading indicator
+      if (!mounted) return;
+      Navigator.pop(context);
+
+      if (!mounted) return;
+
+      switch (_userRole) {
+        case 'patient':
+          if (userData is Patient) {
+            await Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder:
+                    (context) => PatientHome(patientData: userData.toMap()),
+              ),
+            );
+          } else {
+            throw Exception('Invalid patient data');
+          }
+          break;
+        case 'doctor':
+          if (userData is Doctor) {
+            await Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => DoctorHome(doctorData: userData.toMap()),
+              ),
+            );
+          } else {
+            throw Exception('Invalid doctor data');
+          }
+          break;
+        case 'admin':
+          await Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const AdminHome()),
+          );
+          break;
+        default:
+          throw Exception('Invalid user role');
+      }
+    } catch (e) {
+      if (!mounted) return;
+
+      // Hide loading indicator if it's still showing
+      if (Navigator.canPop(context)) {
+        Navigator.pop(context);
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Navigation error: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
+
+      // Reset login state
+      setState(() {
+        _isLoggedIn = false;
+        _userRole = '';
+      });
+    }
   }
 }

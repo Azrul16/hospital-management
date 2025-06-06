@@ -1,35 +1,71 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:hospital_managment_app/styles/palette.dart';
 
 class CustomButton extends StatelessWidget {
-      final String text;
-      final double? width;
-      final double radius;
-      final Function()? onTap;
+  final String text;
+  final VoidCallback onPressed;
+  final bool isLoading;
+  final bool isOutlined;
+  final Color? backgroundColor;
+  final Color? textColor;
+  final double? width;
+  final double height;
+  final double borderRadius;
 
-  const CustomButton({super.key, required this.text,  this.width, this.onTap, required this.radius});
+  const CustomButton({
+    Key? key,
+    required this.text,
+    required this.onPressed,
+    this.isLoading = false,
+    this.isOutlined = false,
+    this.backgroundColor,
+    this.textColor,
+    this.width,
+    this.height = 50,
+    this.borderRadius = 12,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final palette = context.watch<Palette>();
-
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        alignment: Alignment.center,
-        width: width,
-        height: 45,
-        padding: const EdgeInsets.all(8.0),
-        decoration: BoxDecoration(
-          color: palette.violet,
-          border: Border.all(width: 4, color: palette.violet),
-          borderRadius: BorderRadius.circular(radius),
+    final theme = Theme.of(context);
+    
+    return SizedBox(
+      width: width ?? double.infinity,
+      height: height,
+      child: ElevatedButton(
+        onPressed: isLoading ? null : onPressed,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: isOutlined 
+              ? Colors.transparent 
+              : (backgroundColor ?? theme.primaryColor),
+          foregroundColor: isOutlined
+              ? (textColor ?? theme.primaryColor)
+              : (textColor ?? Colors.white),
+          elevation: isOutlined ? 0 : 1,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(borderRadius),
+            side: isOutlined
+                ? BorderSide(color: theme.primaryColor)
+                : BorderSide.none,
+          ),
         ),
-        child: Text(
-          text,
-          style: TextStyle(color: palette.trueWhite, fontSize: 15),
-        ),
+        child: isLoading
+            ? SizedBox(
+                height: 20,
+                width: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    isOutlined ? theme.primaryColor : Colors.white,
+                  ),
+                ),
+              )
+            : Text(
+                text,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
       ),
     );
   }

@@ -1,71 +1,69 @@
 import 'package:flutter/material.dart';
-import 'package:logging/logging.dart';
-import 'package:provider/provider.dart';
-import 'package:hospital_managment_app/styles/palette.dart';
 
-class CustomTextFormField extends StatefulWidget {
-  bool obscureText;
-  final String errorMessage;
+class CustomTextFormField extends StatelessWidget {
   final String hintText;
+  final String? labelText;
+  final bool obscureText;
+  final TextEditingController controller;
+  final String? Function(String?)? validator;
+  final TextInputType keyboardType;
+  final Widget? suffixIcon;
+  final int? maxLines;
+  final void Function(String)? onChanged;
+  final Widget? prefixIcon;
 
-  final IconData? icon;
-  final IconData? prefixIcon;
-  CustomTextFormField(
-      {super.key,
-      this.prefixIcon,
-      required this.icon,
-      required this.obscureText,
-      required this.errorMessage,
-      required this.hintText});
-  @override
-  State<CustomTextFormField> createState() => _CustomTextFormFieldState();
-}
-
-class _CustomTextFormFieldState extends State<CustomTextFormField> {
-  static final _log = Logger('custom_text_form_field.dart');
+  const CustomTextFormField({
+    Key? key,
+    required this.hintText,
+    this.labelText,
+    this.obscureText = false,
+    required this.controller,
+    this.validator,
+    this.keyboardType = TextInputType.text,
+    this.suffixIcon,
+    this.maxLines,
+    this.onChanged,
+    this.prefixIcon,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final palette = context.watch<Palette>();
-    return TextFormField(
-      textAlign: TextAlign.left,
-      obscureText: widget.obscureText,
-      obscuringCharacter: '*',
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return widget.errorMessage;
-        }
-        return null;
-      },
-      decoration: InputDecoration(
-        hintText: widget.hintText,
-        prefixIcon: Icon(
-          widget.prefixIcon,
-          color: palette.violet,
-        ),
-        suffixIcon: InkWell(
-            onTap: () {
-              _log.info("Setting obscureText with ${!widget.obscureText}");
-              setState(() {
-                widget.obscureText = !widget.obscureText;
-
-                _log.info("obscureText is now ${!widget.obscureText}");
-              });
-            },
-            child: Icon(
-              widget.icon,
-              color: palette.violet,
-            )),
-        hintStyle: const TextStyle(
-          color: Colors.black26,
-          fontSize: 14,
-          
-        ),
-        border: OutlineInputBorder(
-          borderSide: const BorderSide(
-            color: Colors.black12,
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      child: TextFormField(
+        controller: controller,
+        obscureText: obscureText,
+        validator: validator,
+        keyboardType: keyboardType,
+        maxLines: maxLines ?? 1,
+        onChanged: onChanged,
+        decoration: InputDecoration(
+          hintText: hintText,
+          labelText: labelText,
+          suffixIcon: suffixIcon,
+          prefixIcon: prefixIcon,
+          filled: true,
+          fillColor: Colors.grey[50],
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
           ),
-          borderRadius: BorderRadius.circular(10),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Colors.grey[300]!, width: 1.0),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Theme.of(context).primaryColor, width: 1.5),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Colors.red, width: 1.0),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Colors.red, width: 1.5),
+          ),
         ),
       ),
     );

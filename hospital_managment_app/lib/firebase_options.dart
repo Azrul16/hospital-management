@@ -40,6 +40,16 @@ class DefaultFirebaseOptions {
     }
   }
 
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyCsMCNLhwFvlgSxE5Y503Zk-_jvq5_XETM',
+    appId: '1:277416170289:web:94bec10d952bacece89610',
+    messagingSenderId: '277416170289',
+    projectId: 'hospital-management-c7ddc',
+    authDomain: 'hospital-management-c7ddc.firebaseapp.com',
+    storageBucket: 'hospital-management-c7ddc.firebasestorage.app',
+    measurementId: 'G-47P359Z4LK',
+  );
+
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyByO5gcV-BrDjE7-uC4kcfAnp3JTzuYS14',
     appId: '1:277416170289:android:9d01fe4ad678ac5de89610',
@@ -54,17 +64,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '277416170289',
     projectId: 'hospital-management-c7ddc',
     storageBucket: 'hospital-management-c7ddc.firebasestorage.app',
+    iosClientId: '277416170289-dpcpesid5a9eujr3639ipls8u8trovtg.apps.googleusercontent.com',
     iosBundleId: 'com.example.hospitalManagmentApp',
-  );
-
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyCsMCNLhwFvlgSxE5Y503Zk-_jvq5_XETM',
-    appId: '1:277416170289:web:94bec10d952bacece89610',
-    messagingSenderId: '277416170289',
-    projectId: 'hospital-management-c7ddc',
-    authDomain: 'hospital-management-c7ddc.firebaseapp.com',
-    storageBucket: 'hospital-management-c7ddc.firebasestorage.app',
-    measurementId: 'G-47P359Z4LK',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
@@ -73,6 +74,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '277416170289',
     projectId: 'hospital-management-c7ddc',
     storageBucket: 'hospital-management-c7ddc.firebasestorage.app',
+    iosClientId: '277416170289-dpcpesid5a9eujr3639ipls8u8trovtg.apps.googleusercontent.com',
     iosBundleId: 'com.example.hospitalManagmentApp',
   );
 

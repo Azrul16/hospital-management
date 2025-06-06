@@ -1,25 +1,31 @@
 class User {
-  String name;
-  String age;
-  String role;
-  String gender;
-  String email;
-  String? password;
-  String phoneNumber;
-  String location;
-  String image;
+  final String id;
+  final String name;
+  final String email;
+  final String role; // 'patient', 'doctor', 'admin'
 
   User({
-    required this.age,
-    required this.role,
-    required this.gender,
-    required this.email,
-    required this.phoneNumber,
-      this.password,
+    required this.id,
     required this.name,
-    required this.location,
-    required this.image,
+    required this.email,
+    required this.role,
   });
 
-}
+  factory User.fromMap(Map<String, dynamic> map) {
+    return User(
+      id: map['id'],
+      name: map['name'],
+      email: map['email'],
+      role: map['role'],
+    );
+  }
 
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'email': email,
+      'role': role,
+    };
+  }
+}

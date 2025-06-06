@@ -12,7 +12,12 @@
           "package_name": "com.example.hospital_managment_app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "277416170289-jvp4da7rqu2ga5760rba63par7dnu090.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyByO5gcV-BrDjE7-uC4kcfAnp3JTzuYS14"
@@ -20,7 +25,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "277416170289-jvp4da7rqu2ga5760rba63par7dnu090.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "277416170289-dpcpesid5a9eujr3639ipls8u8trovtg.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.hospitalManagmentApp"
+              }
+            }
+          ]
         }
       }
     }
