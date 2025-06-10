@@ -134,89 +134,93 @@ class _DoctorProfileScreenState extends State<DoctorProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.blue[50],
-
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          children: [
-            SizedBox(height: 50),
-            Center(
-              child: CircleAvatar(
-                radius: 60,
-                backgroundImage: AssetImage('assets/avatar/doctormale.png'),
-              ),
-            ),
-            SizedBox(height: 20),
-            _buildTextField(_nameController, 'Name'),
-            _buildTextField(_emailController, 'Email', enabled: false),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: DropdownButtonFormField<String>(
-                value:
-                    _specializationController.text.isNotEmpty
-                        ? _specializationController.text
-                        : null,
-                decoration: InputDecoration(
-                  labelText: 'Specialization',
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: 600),
+          child: SingleChildScrollView(
+            padding: EdgeInsets.all(32),
+            child: Column(
+              children: [
+                SizedBox(height: 50),
+                Center(
+                  child: CircleAvatar(
+                    radius: 60,
+                    backgroundImage: AssetImage('assets/avatar/doctormale.png'),
                   ),
                 ),
-                items:
-                    _specializations.map((spec) {
-                      return DropdownMenuItem<String>(
-                        value: spec,
-                        child: Text(spec),
-                      );
-                    }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _specializationController.text = value!;
-                  });
-                },
-              ),
-            ),
-            _buildTextField(_availabilityController, 'Availability'),
-            _buildTextField(
-              _phoneController,
-              'Phone',
-              keyboardType: TextInputType.phone,
-            ),
-            SizedBox(height: 20),
-            if (_hasChanges)
-              ElevatedButton.icon(
-                onPressed: _saveProfile,
-                icon: Icon(Icons.save),
-                label: Text('Save Changes'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
+                SizedBox(height: 32),
+                _buildTextField(_nameController, 'Name'),
+                _buildTextField(_emailController, 'Email', enabled: false),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  child: DropdownButtonFormField<String>(
+                    value:
+                        _specializationController.text.isNotEmpty
+                            ? _specializationController.text
+                            : null,
+                    decoration: InputDecoration(
+                      labelText: 'Specialization',
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                    items:
+                        _specializations.map((spec) {
+                          return DropdownMenuItem<String>(
+                            value: spec,
+                            child: Text(spec),
+                          );
+                        }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        _specializationController.text = value!;
+                      });
+                    },
                   ),
                 ),
-              ),
-            SizedBox(height: 20),
-            ElevatedButton.icon(
-              onPressed: () async {
-                await FirebaseService().signOut();
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => LoginScreen()),
-                );
-              },
-              icon: Icon(Icons.logout),
-              label: Text('Logout'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
+                _buildTextField(_availabilityController, 'Availability'),
+                _buildTextField(
+                  _phoneController,
+                  'Phone',
+                  keyboardType: TextInputType.phone,
                 ),
-              ),
+                SizedBox(height: 24),
+                if (_hasChanges)
+                  ElevatedButton.icon(
+                    onPressed: _saveProfile,
+                    icon: Icon(Icons.save),
+                    label: Text('Save Changes'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                  ),
+                SizedBox(height: 24),
+                ElevatedButton.icon(
+                  onPressed: () async {
+                    await FirebaseService().signOut();
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(builder: (context) => LoginScreen()),
+                    );
+                  },
+                  icon: Icon(Icons.logout),
+                  label: Text('Logout'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

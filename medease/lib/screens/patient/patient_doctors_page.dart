@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:medease/widgets/web_layout.dart';
 
 class PatientDoctorsPage extends StatelessWidget {
   final String patientId;
@@ -138,98 +139,101 @@ class PatientDoctorsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: getDoctors(),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return Center(
-            child: Text(
-              'Error loading doctors',
-              style: TextStyle(color: Colors.red),
-            ),
-          );
-        }
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
-        }
-
-        final doctors = snapshot.data!.docs;
-        if (doctors.isEmpty) {
-          return Center(child: Text('No doctors available'));
-        }
-
-        return ListView.builder(
-          padding: EdgeInsets.all(16),
-          itemCount: doctors.length,
-          itemBuilder: (context, index) {
-            var doctor = doctors[index];
-            var data = doctor.data() as Map<String, dynamic>;
-
-            return GestureDetector(
-              onTap: () => _showDoctorDetailsDialog(context, data, doctor.id),
-              child: Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                elevation: 6,
-                margin: EdgeInsets.symmetric(vertical: 10),
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 28,
-                        backgroundColor: Colors.blue.shade100,
-                        child: Icon(
-                          Icons.person,
-                          color: Colors.blue.shade700,
-                          size: 30,
-                        ),
-                      ),
-                      SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              data['name'] ?? 'Unknown',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(height: 4),
-                            Text(
-                              data['specialization'] ?? '',
-                              style: TextStyle(color: Colors.grey[700]),
-                            ),
-                          ],
-                        ),
-                      ),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue.shade700,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        onPressed: () {
-                          _showRequestAppointmentDialog(
-                            context,
-                            doctor.id,
-                            data['name'] ?? 'Doctor',
-                          );
-                        },
-                        child: Text('Request'),
-                      ),
-                    ],
-                  ),
-                ),
+    return WebLayout(
+      title: 'Doctors - MedEase',
+      child: StreamBuilder<QuerySnapshot>(
+        stream: getDoctors(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(
+              child: Text(
+                'Error loading doctors',
+                style: TextStyle(color: Colors.red),
               ),
             );
-          },
-        );
-      },
+          }
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+
+          final doctors = snapshot.data!.docs;
+          if (doctors.isEmpty) {
+            return Center(child: Text('No doctors available'));
+          }
+
+          return ListView.builder(
+            padding: EdgeInsets.all(16),
+            itemCount: doctors.length,
+            itemBuilder: (context, index) {
+              var doctor = doctors[index];
+              var data = doctor.data() as Map<String, dynamic>;
+
+              return GestureDetector(
+                onTap: () => _showDoctorDetailsDialog(context, data, doctor.id),
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  elevation: 6,
+                  margin: EdgeInsets.symmetric(vertical: 10),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 28,
+                          backgroundColor: Colors.blue.shade100,
+                          child: Icon(
+                            Icons.person,
+                            color: Colors.blue.shade700,
+                            size: 30,
+                          ),
+                        ),
+                        SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                data['name'] ?? 'Unknown',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(height: 4),
+                              Text(
+                                data['specialization'] ?? '',
+                                style: TextStyle(color: Colors.grey[700]),
+                              ),
+                            ],
+                          ),
+                        ),
+                        ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue.shade700,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          onPressed: () {
+                            _showRequestAppointmentDialog(
+                              context,
+                              doctor.id,
+                              data['name'] ?? 'Doctor',
+                            );
+                          },
+                          child: Text('Request'),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }

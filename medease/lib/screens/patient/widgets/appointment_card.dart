@@ -14,13 +14,24 @@ class AppointmentCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.symmetric(vertical: 6),
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      margin: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+      elevation: 6,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      shadowColor: Colors.teal.shade200,
       child: ListTile(
-        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        title: Text('Doctor: \$doctorName', style: TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Text('Status: \$status'),
+        contentPadding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        title: Text(
+          'Doctor: $doctorName',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+            color: Colors.teal.shade900,
+          ),
+        ),
+        subtitle: Text(
+          'Status: $status',
+          style: TextStyle(fontSize: 16, color: Colors.grey.shade700),
+        ),
         onTap: onTap,
       ),
     );

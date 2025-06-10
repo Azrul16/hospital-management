@@ -8,6 +8,17 @@ import 'widgets/prescription_dialog.dart';
 import 'doctor_appointment_detail_screen.dart';
 import 'doctor_profile.dart';
 
+import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:medease/screens/doctor/doctor_presctiption_management_screen.dart';
+import '../../services/firebase_service.dart';
+import 'widgets/appointment_card.dart';
+import 'widgets/reject_dialog.dart';
+import 'widgets/prescription_dialog.dart';
+import 'doctor_appointment_detail_screen.dart';
+import 'doctor_profile.dart';
+import '../../widgets/web_layout.dart';
+
 class DoctorDashboardScreen extends StatefulWidget {
   final String doctorId;
 
@@ -114,15 +125,15 @@ class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
         Text(
           '$label: ',
           style: TextStyle(
-            fontSize: 14,
+            fontSize: 16,
             color: Colors.black87,
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w600,
           ),
         ),
         Text(
           value,
           style: TextStyle(
-            fontSize: 14,
+            fontSize: 16,
             color: color,
             fontWeight: FontWeight.bold,
           ),
@@ -137,7 +148,7 @@ class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
         // Performance Metrics Bar under AppBar
         Container(
           color: Colors.teal.shade100,
-          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+          padding: EdgeInsets.symmetric(vertical: 16, horizontal: 24),
           child: StreamBuilder<List<QueryDocumentSnapshot>>(
             stream: getDoctorAppointments(),
             builder: (context, snapshot) {
@@ -189,7 +200,7 @@ class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
                     ),
                     _separator(),
                     _buildColoredMetric(
-                      'Pending',
+                      'Pending', 
                       pendingCount.toString(),
                       Colors.red,
                     ),
@@ -208,7 +219,7 @@ class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
 
         // Search bar
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           child: TextField(
             decoration: InputDecoration(
               labelText: 'Search patients or appointments',
@@ -334,19 +345,34 @@ class _DoctorDashboardScreenState extends State<DoctorDashboardScreen> {
       DoctorProfileScreen(doctorId: widget.doctorId),
     ];
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Doctor Dashboard'),
-        backgroundColor: Colors.teal.shade700,
-      ),
-      body: _pages[_selectedIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.teal.shade700,
-        onTap: _onItemTapped,
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+    return WebLayout(
+      title: 'Doctor Dashboard',
+      child: Row(
+        children: [
+          NavigationRail(
+            selectedIndex: _selectedIndex,
+            onDestinationSelected: _onItemTapped,
+            labelType: NavigationRailLabelType.all,
+            backgroundColor: Colors.teal.shade50,
+            selectedIconTheme: IconThemeData(color: Colors.teal.shade700),
+            selectedLabelTextStyle: TextStyle(color: Colors.teal.shade700),
+            unselectedIconTheme: IconThemeData(color: Colors.grey.shade600),
+            unselectedLabelTextStyle: TextStyle(color: Colors.grey.shade600),
+            destinations: [
+              NavigationRailDestination(
+                icon: Icon(Icons.home),
+                label: Text('Home'),
+              ),
+              NavigationRailDestination(
+                icon: Icon(Icons.person),
+                label: Text('Profile'),
+              ),
+            ],
+          ),
+          VerticalDivider(thickness: 1, width: 1),
+          Expanded(
+            child: _pages[_selectedIndex],
+          ),
         ],
       ),
     );

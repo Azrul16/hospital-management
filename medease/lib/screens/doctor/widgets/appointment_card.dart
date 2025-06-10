@@ -43,20 +43,20 @@ class AppointmentCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+        margin: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         decoration: BoxDecoration(
-          color: Colors.grey[200], // Darker card background
-          borderRadius: BorderRadius.circular(16),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black26,
-              blurRadius: 6,
-              offset: Offset(2, 4),
+              color: Colors.teal.shade100,
+              blurRadius: 8,
+              offset: Offset(2, 6),
             ),
           ],
         ),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -67,22 +67,22 @@ class AppointmentCard extends StatelessWidget {
                   Text(
                     patientName,
                     style: TextStyle(
-                      fontSize: 18,
+                      fontSize: 20,
                       fontWeight: FontWeight.bold,
                       color: Colors.teal.shade900,
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
-                      color: getStatusColor(status).withOpacity(0.1),
+                      color: getStatusColor(status).withOpacity(0.15),
                       border: Border.all(color: getStatusColor(status)),
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(24),
                     ),
                     child: Text(
                       status.toUpperCase(),
                       style: TextStyle(
-                        fontSize: 12,
+                        fontSize: 14,
                         fontWeight: FontWeight.bold,
                         color: getStatusColor(status),
                       ),
@@ -90,7 +90,7 @@ class AppointmentCard extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(height: 12),
+              SizedBox(height: 16),
 
               // Time Info Boxes
               Row(
@@ -102,7 +102,7 @@ class AppointmentCard extends StatelessWidget {
                     color: Colors.teal.shade100,
                   ),
                   if (responseTime != null && responseTime!.isNotEmpty)
-                    SizedBox(width: 8),
+                    SizedBox(width: 12),
                   if (responseTime != null && responseTime!.isNotEmpty)
                     _buildInfoBox(
                       icon: Icons.schedule,
@@ -112,21 +112,21 @@ class AppointmentCard extends StatelessWidget {
                     ),
                 ],
               ),
-              SizedBox(height: 8),
+              SizedBox(height: 12),
 
               // Comment
               if (doctorComment != null && doctorComment!.isNotEmpty)
                 Padding(
-                  padding: const EdgeInsets.only(top: 4),
+                  padding: const EdgeInsets.only(top: 6),
                   child: Text(
                     '💬 Comment: $doctorComment',
-                    style: TextStyle(fontSize: 14, color: Colors.grey.shade800),
+                    style: TextStyle(fontSize: 16, color: Colors.grey.shade800),
                   ),
                 ),
 
               // Action Buttons
               if (status == 'pending' || status == 'accepted') ...[
-                SizedBox(height: 12),
+                SizedBox(height: 16),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -136,7 +136,7 @@ class AppointmentCard extends StatelessWidget {
                         color: Colors.green,
                         onPressed: onAccept,
                       ),
-                      SizedBox(width: 8),
+                      SizedBox(width: 12),
                       _buildActionButton(
                         icon: Icons.close,
                         color: Colors.red,

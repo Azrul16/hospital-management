@@ -14,20 +14,35 @@ class DoctorCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.symmetric(vertical: 6),
-      elevation: 3,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      margin: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+      elevation: 6,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      shadowColor: Colors.teal.shade200,
       child: ListTile(
-        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        title: Text(name, style: TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Text(specialization),
+        contentPadding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        title: Text(
+          name,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+            color: Colors.teal.shade900,
+          ),
+        ),
+        subtitle: Text(
+          specialization,
+          style: TextStyle(fontSize: 16, color: Colors.grey.shade700),
+        ),
         trailing: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            backgroundColor: Colors.teal.shade600,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           ),
           onPressed: onRequest,
-          child: Text('Request Appointment'),
+          child: Text(
+            'Request Appointment',
+            style: TextStyle(fontSize: 16),
+          ),
         ),
       ),
     );

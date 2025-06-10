@@ -9,6 +9,7 @@ import 'package:medease/screens/admin/admin_prescription_screen.dart';
 import 'package:medease/screens/admin/widgets/patient_card.dart';
 import 'package:medease/screens/admin/widgets/patient_list.dart';
 import 'package:medease/screens/login_screen.dart';
+import 'package:medease/widgets/web_layout.dart';
 
 class AdminDashboardScreen extends StatelessWidget {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -17,7 +18,6 @@ class AdminDashboardScreen extends StatelessWidget {
   Widget _buildSummaryCard({
     required String title,
     required AsyncSnapshot<QuerySnapshot> snapshot,
-
     required Color color,
     required IconData icon,
     required VoidCallback onTap,
@@ -50,7 +50,7 @@ class AdminDashboardScreen extends StatelessWidget {
             Text(
               title,
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 22,
                 fontWeight: FontWeight.w700,
                 color: Colors.green,
               ),
@@ -61,7 +61,7 @@ class AdminDashboardScreen extends StatelessWidget {
                 : Text(
                   count.toString(),
                   style: TextStyle(
-                    fontSize: 32,
+                    fontSize: 36,
                     fontWeight: FontWeight.bold,
                     color: Colors.green,
                   ),
@@ -85,164 +85,122 @@ class AdminDashboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0xFFF4F6FA),
-      appBar: AppBar(
-        backgroundColor: Colors.blue.shade800,
-        title: Text('Admin Dashboard'),
-        centerTitle: true,
-        elevation: 4,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-        child: Column(
-          children: [
-            // Dashboard Title + Welcome or Info can be added here
-            Text(
-              'Welcome Back, Admin',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.w700,
-                color: Colors.blue.shade900,
-              ),
-            ),
-            SizedBox(height: 24),
+    int _selectedIndex = 0;
 
-            // Expanded Grid for cards fills available space
-            Expanded(
-              child: GridView(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 24,
-                  crossAxisSpacing: 24,
-                  childAspectRatio: 4 / 5,
+    Widget _getSelectedPage() {
+      switch (_selectedIndex) {
+        case 0:
+          return AdminDoctorScreen();
+        case 1:
+          return AdminPatientScreen();
+        case 2:
+          return AdminAppointmentScreen();
+        case 3:
+          return AdminPrescriptionScreen();
+        case 4:
+          return AdminActivityScreen();
+        default:
+          return Container();
+      }
+    }
+
+    return WebLayout(
+      title: 'Admin Dashboard - MedEase',
+      child: StatefulBuilder(
+        builder: (context, setState) {
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              NavigationRail(
+                selectedIndex: _selectedIndex,
+                onDestinationSelected: (int index) {
+                  setState(() {
+                    _selectedIndex = index;
+                  });
+                },
+                labelType: NavigationRailLabelType.all,
+                backgroundColor: Colors.blue.shade50,
+                selectedIconTheme: IconThemeData(color: Colors.blue.shade800),
+                selectedLabelTextStyle: TextStyle(color: Colors.blue.shade800),
+                unselectedIconTheme: IconThemeData(color: Colors.grey.shade600),
+                unselectedLabelTextStyle: TextStyle(
+                  color: Colors.grey.shade600,
                 ),
-                children: [
-                  StreamBuilder<QuerySnapshot>(
-                    stream: _firestore.collection('doctors').snapshots(),
-                    builder: (context, snapshot) {
-                      return _buildSummaryCard(
-                        title: 'Doctors',
-                        snapshot: snapshot,
-                        color: Colors.teal,
-                        icon: Icons.medical_services_outlined,
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => AdminDoctorScreen(),
-                            ),
-                          );
-                        },
-                      );
-                    },
+                destinations: [
+                  NavigationRailDestination(
+                    icon: Icon(Icons.medical_services_outlined),
+                    label: Text('Doctors'),
                   ),
-                  StreamBuilder<QuerySnapshot>(
-                    stream: _firestore.collection('users').snapshots(),
-                    builder: (context, snapshot) {
-                      return _buildSummaryCard(
-                        title: 'Patients',
-                        snapshot: snapshot,
-                        color: Colors.deepPurple,
-                        icon: Icons.people_alt_outlined,
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => AdminPatientScreen(),
-                            ),
-                          );
-                        },
-                      );
-                    },
+                  NavigationRailDestination(
+                    icon: Icon(Icons.people_alt_outlined),
+                    label: Text('Patients'),
                   ),
-                  StreamBuilder<QuerySnapshot>(
-                    stream: _firestore.collection('appointments').snapshots(),
-                    builder: (context, snapshot) {
-                      return _buildSummaryCard(
-                        title: 'Appointments',
-                        snapshot: snapshot,
-                        color: Colors.orange.shade700,
-                        icon: Icons.event_note_outlined,
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => AdminAppointmentScreen(),
-                            ),
-                          );
-                        },
-                      );
-                    },
+                  NavigationRailDestination(
+                    icon: Icon(Icons.event_note_outlined),
+                    label: Text('Appointments'),
                   ),
-                  StreamBuilder<QuerySnapshot>(
-                    stream: _firestore.collection('prescriptions').snapshots(),
-                    builder: (context, snapshot) {
-                      return _buildSummaryCard(
-                        title: 'Prescriptions',
-                        snapshot: snapshot,
-                        color: Colors.redAccent,
-                        icon: Icons.description_outlined,
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => AdminPrescriptionScreen(),
-                            ),
-                          );
-                        },
-                      );
-                    },
+                  NavigationRailDestination(
+                    icon: Icon(Icons.description_outlined),
+                    label: Text('Prescriptions'),
                   ),
-                  StreamBuilder<QuerySnapshot>(
-                    stream:
-                        _firestore
-                            .collection('appointments')
-                            .orderBy('createdAt', descending: true)
-                            .limit(20)
-                            .snapshots(),
-                    builder: (context, snapshot) {
-                      return _buildSummaryCard(
-                        title: 'Recent Activity',
-                        snapshot: snapshot,
-                        color: Colors.blueGrey,
-                        icon: Icons.timeline,
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => AdminActivityScreen(),
-                            ),
-                          );
-                        },
-                      );
-                    },
+                  NavigationRailDestination(
+                    icon: Icon(Icons.timeline),
+                    label: Text('Activity'),
                   ),
                 ],
               ),
-            ),
-
-            // Logout Button fixed at bottom with spacing
-            SizedBox(height: 12),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                icon: Icon(Icons.logout),
-                label: Text(
-                  'Logout',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.redAccent,
-                  padding: EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
+              VerticalDivider(thickness: 1, width: 1),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(32),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Welcome Back, Admin',
+                        style: TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.blue.shade900,
+                        ),
+                      ),
+                      SizedBox(height: 32),
+                      Expanded(child: _getSelectedPage()),
+                      SizedBox(height: 24),
+                      SizedBox(
+                        width: 200,
+                        child: ElevatedButton.icon(
+                          icon: Icon(Icons.logout),
+                          label: Text(
+                            'Logout',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.redAccent,
+                            padding: EdgeInsets.symmetric(vertical: 20),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            elevation: 5,
+                          ),
+                          onPressed:
+                              () => Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => LoginScreen(),
+                                ),
+                              ),
+                        ),
+                      ),
+                    ],
                   ),
-                  elevation: 5,
                 ),
-                onPressed:
-                    () => Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => LoginScreen()),
-                    ),
               ),
-            ),
-          ],
-        ),
+            ],
+          );
+        },
       ),
     );
   }

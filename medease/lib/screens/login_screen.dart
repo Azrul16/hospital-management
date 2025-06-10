@@ -5,6 +5,7 @@ import 'package:medease/screens/admin/admin_dashboard.dart';
 import 'package:medease/screens/doctor/doctor_dashboard.dart';
 import 'package:medease/screens/patient/patient_dashboard.dart';
 import 'package:medease/screens/patient/patient_registration.dart';
+import 'package:medease/widgets/web_layout.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -114,103 +115,111 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0xFFE8F0F9),
-      body: Center(
+    return WebLayout(
+      title: 'Login - MedEase',
+      child: Center(
         child: SingleChildScrollView(
-          child: Card(
-            margin: EdgeInsets.symmetric(horizontal: 24),
-            elevation: 10,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Padding(
-              padding: EdgeInsets.all(24),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.local_hospital,
-                      size: 64,
-                      color: Colors.blue.shade700,
-                    ),
-                    SizedBox(height: 16),
-                    Text(
-                      'Welcome to MedEase',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blue.shade900,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: 480),
+            child: Card(
+              margin: EdgeInsets.symmetric(horizontal: 48, vertical: 24),
+              elevation: 12,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(24),
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(32),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.local_hospital,
+                        size: 72,
+                        color: Colors.blue.shade700,
                       ),
-                    ),
-                    SizedBox(height: 8),
-                    Text(
-                      'Sign in to continue',
-                      style: TextStyle(fontSize: 16, color: Colors.grey[600]),
-                    ),
-                    SizedBox(height: 24),
-                    TextFormField(
-                      decoration: InputDecoration(
-                        labelText: 'Email',
-                        prefixIcon: Icon(Icons.email),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
+                      SizedBox(height: 24),
+                      Text(
+                        'Welcome to MedEase',
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue.shade900,
                         ),
                       ),
-                      keyboardType: TextInputType.emailAddress,
-                      onChanged: (val) => email = val.trim(),
-                      validator:
-                          (val) =>
-                              val != null && val.contains('@')
-                                  ? null
-                                  : 'Enter a valid email',
-                    ),
-                    SizedBox(height: 16),
-                    TextFormField(
-                      decoration: InputDecoration(
-                        labelText: 'Password',
-                        prefixIcon: Icon(Icons.lock),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
+                      SizedBox(height: 12),
+                      Text(
+                        'Sign in to continue',
+                        style: TextStyle(fontSize: 18, color: Colors.grey[600]),
                       ),
-                      obscureText: true,
-                      onChanged: (val) => password = val,
-                      validator:
-                          (val) =>
-                              val != null && val.length >= 6
-                                  ? null
-                                  : 'Password must be at least 6 characters',
-                    ),
-                    SizedBox(height: 24),
-                    if (errorMessage.isNotEmpty)
-                      Text(errorMessage, style: TextStyle(color: Colors.red)),
-                    SizedBox(height: 12),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue.shade700,
-                          padding: EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                      SizedBox(height: 32),
+                      TextFormField(
+                        decoration: InputDecoration(
+                          labelText: 'Email',
+                          prefixIcon: Icon(Icons.email),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
                           ),
                         ),
-                        onPressed: isLoading ? null : _login,
-                        child:
-                            isLoading
-                                ? CircularProgressIndicator(color: Colors.white)
-                                : Text('Login', style: TextStyle(fontSize: 16)),
+                        keyboardType: TextInputType.emailAddress,
+                        onChanged: (val) => email = val.trim(),
+                        validator:
+                            (val) =>
+                                val != null && val.contains('@')
+                                    ? null
+                                    : 'Enter a valid email',
                       ),
-                    ),
-                    SizedBox(height: 16),
-                    TextButton(
-                      onPressed: _goToRegistration,
-                      child: Text("Don't have an account? Register here"),
-                    ),
-                  ],
+                      SizedBox(height: 20),
+                      TextFormField(
+                        decoration: InputDecoration(
+                          labelText: 'Password',
+                          prefixIcon: Icon(Icons.lock),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        obscureText: true,
+                        onChanged: (val) => password = val,
+                        validator:
+                            (val) =>
+                                val != null && val.length >= 6
+                                    ? null
+                                    : 'Password must be at least 6 characters',
+                      ),
+                      SizedBox(height: 32),
+                      if (errorMessage.isNotEmpty)
+                        Text(errorMessage, style: TextStyle(color: Colors.red)),
+                      SizedBox(height: 16),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue.shade700,
+                            padding: EdgeInsets.symmetric(vertical: 18),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                          ),
+                          onPressed: isLoading ? null : _login,
+                          child:
+                              isLoading
+                                  ? CircularProgressIndicator(
+                                    color: Colors.white,
+                                  )
+                                  : Text(
+                                    'Login',
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      TextButton(
+                        onPressed: _goToRegistration,
+                        child: Text("Don't have an account? Register here"),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

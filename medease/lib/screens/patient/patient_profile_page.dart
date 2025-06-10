@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:medease/screens/login_screen.dart';
 import 'package:medease/services/firebase_service.dart';
+import 'package:medease/widgets/web_layout.dart';
 
 class PatientProfilePage extends StatefulWidget {
   final String patientId;
@@ -132,97 +133,139 @@ class _PatientProfilePageState extends State<PatientProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // ignore: deprecated_member_use
-      body: WillPopScope(
-        onWillPop: () async => true,
-        child: Container(
-          color: Colors.teal.shade50,
-          child: ListView(
-            padding: EdgeInsets.all(16),
-            children: [
-              Center(child: _buildAvatar()),
-              SizedBox(height: 16),
-              _buildCard(
-                child: TextField(
-                  controller: _nameController,
-                  decoration: InputDecoration(labelText: 'Name'),
-                ),
-              ),
-              // _buildCard(
-              //   child: TextField(
-              //     controller: _emailController,
-              //     decoration: InputDecoration(labelText: 'Email'),
-              //     enabled: false,
-              //   ),
-              // ),
-              _buildCard(
-                child: TextField(
-                  controller: _mobileController,
-                  decoration: InputDecoration(labelText: 'Mobile Number'),
-                  keyboardType: TextInputType.phone,
-                ),
-              ),
-              _buildCard(
-                child: TextField(
-                  controller: _ageController,
-                  decoration: InputDecoration(labelText: 'Age'),
-                  keyboardType: TextInputType.number,
-                ),
-              ),
-              _buildCard(
-                child: DropdownButtonFormField<String>(
-                  value: _selectedGender,
-                  items:
-                      ['Male', 'Female', 'Other']
-                          .map(
-                            (gender) => DropdownMenuItem(
-                              value: gender,
-                              child: Text(gender),
-                            ),
-                          )
-                          .toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedGender = value!;
-                      _onFieldChanged();
-                    });
-                  },
-                  decoration: InputDecoration(labelText: 'Gender'),
-                ),
-              ),
-              _buildCard(
-                child: TextField(
-                  controller: _medicalHistoryController,
-                  decoration: InputDecoration(labelText: 'Medical History'),
-                  maxLines: 3,
-                ),
-              ),
-              SizedBox(height: 20),
-              if (_hasChanges)
-                ElevatedButton(
-                  onPressed: _saveProfile,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.teal,
-                    padding: EdgeInsets.symmetric(vertical: 14),
+    return WebLayout(
+      title: 'Patient Profile - MedEase',
+      child: Center(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: 600),
+          child: Container(
+            color: Colors.teal.shade50,
+            padding: EdgeInsets.all(32),
+            child: ListView(
+              shrinkWrap: true,
+              children: [
+                Center(child: _buildAvatar()),
+                SizedBox(height: 24),
+                Card(
+                  margin: EdgeInsets.symmetric(vertical: 12),
+                  elevation: 6,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
                   ),
-                  child: Text('Save Changes', style: TextStyle(fontSize: 16)),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                    child: TextField(
+                      controller: _nameController,
+                      decoration: InputDecoration(labelText: 'Name'),
+                    ),
+                  ),
                 ),
-              SizedBox(height: 12),
-              ElevatedButton(
-                onPressed: () async {
-                  await FirebaseService().signOut();
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) => LoginScreen()),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  padding: EdgeInsets.symmetric(vertical: 14),
+                Card(
+                  margin: EdgeInsets.symmetric(vertical: 12),
+                  elevation: 6,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                    child: TextField(
+                      controller: _mobileController,
+                      decoration: InputDecoration(labelText: 'Mobile Number'),
+                      keyboardType: TextInputType.phone,
+                    ),
+                  ),
                 ),
-                child: Text('Logout', style: TextStyle(fontSize: 16)),
-              ),
-            ],
+                Card(
+                  margin: EdgeInsets.symmetric(vertical: 12),
+                  elevation: 6,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                    child: TextField(
+                      controller: _ageController,
+                      decoration: InputDecoration(labelText: 'Age'),
+                      keyboardType: TextInputType.number,
+                    ),
+                  ),
+                ),
+                Card(
+                  margin: EdgeInsets.symmetric(vertical: 12),
+                  elevation: 6,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                    child: DropdownButtonFormField<String>(
+                      value: _selectedGender,
+                      items:
+                          ['Male', 'Female', 'Other']
+                              .map(
+                                (gender) => DropdownMenuItem(
+                                  value: gender,
+                                  child: Text(gender),
+                                ),
+                              )
+                              .toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedGender = value!;
+                          _onFieldChanged();
+                        });
+                      },
+                      decoration: InputDecoration(labelText: 'Gender'),
+                    ),
+                  ),
+                ),
+                Card(
+                  margin: EdgeInsets.symmetric(vertical: 12),
+                  elevation: 6,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                    child: TextField(
+                      controller: _medicalHistoryController,
+                      decoration: InputDecoration(labelText: 'Medical History'),
+                      maxLines: 3,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 24),
+                if (_hasChanges)
+                  ElevatedButton(
+                    onPressed: _saveProfile,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.teal,
+                      padding: EdgeInsets.symmetric(vertical: 18),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                    child: Text('Save Changes', style: TextStyle(fontSize: 18)),
+                  ),
+                SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () async {
+                    await FirebaseService().signOut();
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(builder: (context) => LoginScreen()),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    padding: EdgeInsets.symmetric(vertical: 18),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                  child: Text('Logout', style: TextStyle(fontSize: 18)),
+                ),
+              ],
+            ),
           ),
         ),
       ),

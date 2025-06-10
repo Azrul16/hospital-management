@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:medease/widgets/web_layout.dart';
 
 class PatientAppointmentsPage extends StatelessWidget {
   final String patientId;
@@ -198,8 +199,9 @@ class PatientAppointmentsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
+    return WebLayout(
+      title: 'Appointments - MedEase',
+      child: Container(
         color: Colors.teal.shade50,
         padding: EdgeInsets.all(16),
         child: StreamBuilder<QuerySnapshot>(
