@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:medease/screens/admin/admin_dashboard.dart';
 import 'package:medease/screens/doctor/doctor_dashboard.dart';
+import 'package:medease/screens/patient/forgot_pass.dart';
 import 'package:medease/screens/patient/patient_dashboard.dart';
 import 'package:medease/screens/patient/patient_registration.dart';
 import 'package:medease/widgets/web_layout.dart';
@@ -42,7 +43,6 @@ class _LoginScreenState extends State<LoginScreen> {
         return;
       }
 
-      // Firebase Auth login
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
@@ -50,7 +50,6 @@ class _LoginScreenState extends State<LoginScreen> {
       User? user = userCredential.user;
 
       if (user != null) {
-        // Check if user exists in 'users' collection
         DocumentSnapshot userDoc =
             await _firestore.collection('users').doc(user.uid).get();
 
@@ -72,7 +71,6 @@ class _LoginScreenState extends State<LoginScreen> {
             });
           }
         } else {
-          // If not in 'users', check in 'doctors' collection
           DocumentSnapshot doctorDoc =
               await _firestore.collection('doctors').doc(user.uid).get();
 
@@ -117,114 +115,152 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return WebLayout(
       title: 'Login - MedEase',
-      child: Center(
-        child: SingleChildScrollView(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: 480),
-            child: Card(
-              margin: EdgeInsets.symmetric(horizontal: 48, vertical: 24),
-              elevation: 12,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(24),
-              ),
-              child: Padding(
-                padding: EdgeInsets.all(32),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.local_hospital,
-                        size: 72,
-                        color: Colors.blue.shade700,
-                      ),
-                      SizedBox(height: 24),
-                      Text(
-                        'Welcome to MedEase',
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blue.shade900,
-                        ),
-                      ),
-                      SizedBox(height: 12),
-                      Text(
-                        'Sign in to continue',
-                        style: TextStyle(fontSize: 18, color: Colors.grey[600]),
-                      ),
-                      SizedBox(height: 32),
-                      TextFormField(
-                        decoration: InputDecoration(
-                          labelText: 'Email',
-                          prefixIcon: Icon(Icons.email),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                        ),
-                        keyboardType: TextInputType.emailAddress,
-                        onChanged: (val) => email = val.trim(),
-                        validator:
-                            (val) =>
-                                val != null && val.contains('@')
-                                    ? null
-                                    : 'Enter a valid email',
-                      ),
-                      SizedBox(height: 20),
-                      TextFormField(
-                        decoration: InputDecoration(
-                          labelText: 'Password',
-                          prefixIcon: Icon(Icons.lock),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                        ),
-                        obscureText: true,
-                        onChanged: (val) => password = val,
-                        validator:
-                            (val) =>
-                                val != null && val.length >= 6
-                                    ? null
-                                    : 'Password must be at least 6 characters',
-                      ),
-                      SizedBox(height: 32),
-                      if (errorMessage.isNotEmpty)
-                        Text(errorMessage, style: TextStyle(color: Colors.red)),
-                      SizedBox(height: 16),
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue.shade700,
-                            padding: EdgeInsets.symmetric(vertical: 18),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                          ),
-                          onPressed: isLoading ? null : _login,
-                          child:
-                              isLoading
-                                  ? CircularProgressIndicator(
-                                    color: Colors.white,
-                                  )
-                                  : Text(
-                                    'Login',
-                                    style: TextStyle(fontSize: 18),
-                                  ),
-                        ),
-                      ),
-                      SizedBox(height: 20),
-                      TextButton(
-                        onPressed: _goToRegistration,
-                        child: Text("Don't have an account? Register here"),
-                      ),
-                    ],
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/background.jpeg'),
+                  fit: BoxFit.cover,
+                  colorFilter: ColorFilter.mode(
+                    // ignore: deprecated_member_use
+                    Colors.black.withOpacity(0.3),
+                    BlendMode.darken,
                   ),
                 ),
               ),
             ),
           ),
-        ),
+          Center(
+            child: SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: 480),
+                child: Card(
+                  margin: EdgeInsets.symmetric(horizontal: 48, vertical: 24),
+                  elevation: 12,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.all(32),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.local_hospital,
+                            size: 72,
+                            color: Colors.blue.shade700,
+                          ),
+                          SizedBox(height: 24),
+                          Text(
+                            'Welcome to MedEase',
+                            style: TextStyle(
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.blue.shade900,
+                            ),
+                          ),
+                          SizedBox(height: 12),
+                          Text(
+                            'Sign in to continue',
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                          SizedBox(height: 32),
+                          TextFormField(
+                            decoration: InputDecoration(
+                              labelText: 'Email',
+                              prefixIcon: Icon(Icons.email),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                            ),
+                            keyboardType: TextInputType.emailAddress,
+                            onChanged: (val) => email = val.trim(),
+                            validator:
+                                (val) =>
+                                    val != null && val.contains('@')
+                                        ? null
+                                        : 'Enter a valid email',
+                          ),
+                          SizedBox(height: 20),
+                          TextFormField(
+                            decoration: InputDecoration(
+                              labelText: 'Password',
+                              prefixIcon: Icon(Icons.lock),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                            ),
+                            obscureText: true,
+                            onChanged: (val) => password = val,
+                            validator:
+                                (val) =>
+                                    val != null && val.length >= 6
+                                        ? null
+                                        : 'Password must be at least 6 characters',
+                          ),
+                          SizedBox(height: 32),
+                          if (errorMessage.isNotEmpty)
+                            Text(
+                              errorMessage,
+                              style: TextStyle(color: Colors.red),
+                            ),
+                          SizedBox(height: 16),
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.blue.shade700,
+                                padding: EdgeInsets.symmetric(vertical: 18),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                              ),
+                              onPressed: isLoading ? null : _login,
+                              child:
+                                  isLoading
+                                      ? CircularProgressIndicator(
+                                        color: Colors.white,
+                                      )
+                                      : Text(
+                                        'Login',
+                                        style: TextStyle(fontSize: 18),
+                                      ),
+                            ),
+                          ),
+                          SizedBox(height: 20),
+                          TextButton(
+                            onPressed:
+                                () => {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder:
+                                          (ctx) => const ForgotPasswordScreen(),
+                                    ),
+                                  ),
+                                },
+                            child: Text("Forget password?"),
+                          ),
+                          SizedBox(height: 20),
+                          TextButton(
+                            onPressed: _goToRegistration,
+                            child: Text("Don't have an account? Register here"),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

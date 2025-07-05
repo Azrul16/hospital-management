@@ -30,11 +30,16 @@ class _PatientDashboardScreenState extends State<PatientDashboardScreen> {
 
   final FirebaseService _firebaseService = FirebaseService();
 
-  void _onRequestAppointment(String doctorId, String symptoms) async {
+  void _onRequestAppointment(
+    String doctorId,
+    String symptoms, [
+    String? doctorComment,
+  ]) async {
     await _firebaseService.requestAppointment(
       doctorId,
       widget.patientId,
       symptoms,
+      doctorComment: doctorComment,
     );
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('Appointment requested successfully')),
@@ -87,9 +92,7 @@ class _PatientDashboardScreenState extends State<PatientDashboardScreen> {
             ],
           ),
           VerticalDivider(thickness: 1, width: 1),
-          Expanded(
-            child: _pages[_selectedIndex],
-          ),
+          Expanded(child: _pages[_selectedIndex]),
         ],
       ),
     );
